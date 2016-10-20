@@ -4,264 +4,416 @@
 
 int linhas = 6;
 int colunas = 5;
-int pesoAleatorio = 1;
-int bias = 1; 
+int pesoAleatorio = 0;
+int bias = 1;
 int ft0 = 0;
-int numero = 5;
-
-typedef struct p{
-	int perc;
-	int peso;
-} Perceptron;
+int ft1 = 1;
 
 //----------------------------------------------------------------------------------------------
 
-Perceptron **criaNeuronio();
-void imprimePeso(Perceptron **P);
-void imprimePerc(Perceptron **P);
-void geraPeso(Perceptron **P);
-void zeraM(Perceptron **P);
-void treinamento(Perceptron **P, int **valor);
-void imprimeNum(int **P);
-int **preenche();
+int *criaNeuronio();
+void imprime(int*P);
+void geraPeso(int*P);
+int *treinamento(int *P0,int *P1, int *peso);
+void preenche(int *P, int i);
+int *trocaPesoSoma(int *Perc, int *peso);
+int *trocaPesoSubtrai(int *Perc, int *peso);
+int * verificaFuncaoP0(int somatorio, int *P,int *peso);
+int * verificaFuncaoP1(int somatorio, int *P,int *peso);
+int somatorio(int * P, int * peso);
 
 //----------------------------------------------------------------------------------------------
 
-int main(int argc, char const *argv[]){
-
-	Perceptron **P;
-	int *peso;
-	int **valor;
-
-	P = criaNeuronio();
-
-	valor = preenche();
-
-	imprimeNum(valor);
-
-	//peso = treinamento(P, valor);
-
-	return 0;
-}
-//----------------------------------------------------------------------------------------------
-Perceptron **criaNeuronio(){
-	Perceptron ** P;
-	int i;
-
-	srand(time(NULL));
-
-	P = malloc (linhas * sizeof(Perceptron));
-
-
-	for(i =0; i< linhas; i++)
-	{
-		P[i] =  malloc(colunas * sizeof(Perceptron));
-	}
-
-	geraPeso(P);
-
-	return P;
-}
-
-//----------------------------------------------------------------------------------------------
-void zeraM(Perceptron **P)
+int main(int argc, char const *argv[])
 {
-    int i,j;
+    int *P0;
+    int *P1;
+    int **peso;
 
-    for(i = 0; i< linhas ; i++)
+    P0 = criaNeuronio();
+    P1 = criaNeuronio();
+    peso = criaNeuronio();
+
+    geraPeso(peso);
+    preenche(P0,0);
+    preenche(P1,1);
+
+    imprime(P0);
+    printf("\n\n");
+
+    imprime(P1);
+    printf("\n\n");
+
+    imprime(peso);
+    printf("\n\n");
+
+    printf("O numero de iteracoes : %d", treinamento(P0,P1,peso));
+
+    //imprimePeso(P0);
+
+    return 0;
+}
+//----------------------------------------------------------------------------------------------
+int *criaNeuronio()
+{
+    int* P;
+
+    srand(time(NULL));
+
+    P = malloc (linhas*colunas * sizeof(int));
+
+    return P;
+}
+
+//----------------------------------------------------------------------------------------------
+void imprime(int *P)
+{
+    int j;
+    for(j = 0; j < linhas*colunas; j++)
     {
-        for(j = 0; j < colunas
-        	; j++)
-        {
-            P[i][j].perc = 0;
-        }
+        if(j%5 == 0) printf("\n");
+        printf("%d \t",P[j]);
     }
 }
 
 //----------------------------------------------------------------------------------------------
-void imprimePerc(Perceptron **P)
+void geraPeso(int *peso)
 {
-	int i,j;
+    int i;
 
-    for(i = 0; i< linhas ; i++)
+    if(pesoAleatorio == 1)
     {
-        for(j = 0; j < colunas; j++)
-        {
-            printf("%d \t",P[i][j].perc);
-        }
-        printf("\n");
-    }   
-}
-
-//----------------------------------------------------------------------------------------------
-void imprimePeso(Perceptron **P)
-{
-	int i,j;
-
-    for(i = 0; i< linhas ; i++)
+        for(i = 0; i< linhas*colunas ; i++) peso[i] = rand()%2;
+    }
+    else
     {
-        for(j = 0; j < colunas; j++)
-        {
-            printf("%d \t",P[i][j].peso);
-        }
-        printf("\n");
-    }   
+        for(i = 0; i< linhas*colunas ; i++) peso[i] = 0;
+    }
 }
-//----------------------------------------------------------------------------------------------
-void imprimeNum(int **P)
-{
-	int i,j;
 
-    for(i = 0; i< linhas ; i++)
+//----------------------------------------------------------------------------------------------
+int *treinamento(int*P0, int*P1, int *peso)
+{
+    int iterator = 1;
+    int somat = 0;
+    int altera = 1;
+    int i, j;
+
+    while(altera)
     {
-        for(j = 0; j < colunas; j++)
-        {
-            printf(" %d ",P[i][j]);
-        }
-        printf("\n");
-    }   
+        somat = somatorio(P0, peso);
+
+        peso = verificaFuncaoP0(somat, P0,peso);
+
+        somat = somatorio(P1,peso);
+
+        peso = verificaFuncaoP1(somat, P1,peso);
+
+        iterator++;
+    }
+    printf("Iteracoes %d", iterator);
+    return peso;
 }
 
-//----------------------------------------------------------------------------------------------
-void geraPeso(Perceptron **P)
+int * verificaFuncaoP0(int somatorio, int *P ,int *peso)
 {
-	int i, j;
 
-	if(pesoAleatorio == 1)
-	{
-		for(i = 0; i< linhas ; i++)
-	    {
-	        for(j = 0; j < colunas; j++)
-	        {
-	            P[i][j].peso = rand()%2;
-	        }
-	    }
+    if(somatorio > ft0)
+    {
+        peso = trocaPesoSubtrai(P, peso);
+    }
 
-	}
-	else
-	{
-		for(i = 0; i< linhas ; i++)
-	    {
-	        for(j = 0; j < colunas; j++)
-	        {
-	            P[i][j].peso = 0;
-	        }
-	    }
-	}
+    return peso;
 }
 
-//----------------------------------------------------------------------------------------------
-/*void treinamento(Perceptron **P, int **valor);
+int * verificaFuncaoP1(int somatorio, int *P ,int *peso)
 {
-	int invalido = 1;
-	int *peso;
-	int somatorio = 1;
-	int funcao;
 
-	peso = malloc(colunas+1*sizeof(int));
+    if(somatorio > ft1)
+    {
+        peso = trocaPesoSubtrai(P, peso);
+    }
+    else
+        peso = trocaPesoSoma(P,peso);
 
-	for (int i = 0; i < ; ++i) peso = P[i][j].peso;
-	if(pesoAleatorio) peso[colunas+1] = rand()%2;
-	else peso[colunas+1] = 0;	
-
-	while(invalido){
-
-		for (int i = 0; i < linhas; ++i){	
-
-			for (int i = 1; i < colunas; ++i)
-			{
-				somatorio = peso[i]* P[i][j].perc;
-			}
-
-			if(pesoAleatorio)
-				somatorio += bias* rand()%2;
-			else
-				somatorio = bias*peso[colunas+1]; 
-		}
-		
-		somatorio <= ft0 ? funcao = 0 : funcao = 1;
-
-		if(funcao != valor[])
-
-
-		funcao  	
-	}
-
-	return peso;
+    return peso;
 }
-*/
-int **preenche()
+
+int somatorio(int * P, int * peso)
 {
-	int **E;
-    int i,j;
+    int i;
+    int somat = 0;
 
-	E = malloc (linhas * sizeof(int*));
+    for (i = 0; i < linhas*colunas; ++i)
+    {
+        somat += P[i] * peso[i];
+    }
 
-	for(i =0; i< linhas; i++) E[i] =  malloc(colunas * sizeof(int));		
+    if(pesoAleatorio)
+        somat += bias* rand()%2;
+    else
+        somat = bias*0;
 
+    return somat;
+}
+
+int * trocaPesoSoma(int *Perc, int *peso)
+{
+    int i;
+    for (i = 0; i < linhas*colunas; ++i)
+    {
+        peso[i] += Perc[i];
+    }
+    return peso;
+}
+
+int * trocaPesoSubtrai(int *Perc, int *peso)
+{
+    int i;
+    for (i = 0; i < linhas*colunas; ++i)
+    {
+        peso[i] -= Perc[i];
+    }
+
+    return peso;
+}
+
+void preenche(int * p, int numero )
+{
+    int E[linhas][colunas];
     switch(numero)
     {
-	    case 0:
-	        E[0][0] = 0;E[0][1] = 1;E[0][2] = 1;E[0][3] = 1;E[0][4] = 0;
-	        E[1][0] = 1;E[1][1] = 0;E[1][2] = 0;E[1][3] = 0;E[1][4] = 1;
-	        E[2][0] = 1;E[2][1] = 0;E[2][2] = 0;E[2][3] = 0;E[2][4] = 1;
-	        E[3][0] = 1;E[3][1] = 0;E[3][2] = 0;E[3][3] = 0;E[3][4] = 1;
-	        E[4][0] = 1;E[4][1] = 0;E[4][2] = 0;E[4][3] = 0;E[4][4] = 1;
-	        E[5][0] = 0;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 0;
-	        break;
-	    case 1:
-	        E[0][0] = 0;E[0][1] = 0;E[0][2] = 1;E[0][3] = 0;E[0][4] = 0;
-	        E[1][0] = 0;E[1][1] = 1;E[1][2] = 1;E[1][3] = 0;E[1][4] = 0;
-	        E[2][0] = 0;E[2][1] = 0;E[2][2] = 1;E[2][3] = 0;E[2][4] = 0;
-	        E[3][0] = 0;E[3][1] = 0;E[3][2] = 1;E[3][3] = 0;E[3][4] = 0;
-	        E[4][0] = 0;E[4][1] = 0;E[4][2] = 1;E[4][3] = 0;E[4][4] = 0;
-	        E[5][0] = 1;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 1;
-	        break;
-	    case 2:
-	        E[0][0] = 0;E[0][1] = 1;E[0][2] = 1;E[0][3] = 1;E[0][4] = 0;
-	        E[1][0] = 0;E[1][1] = 1;E[1][2] = 0;E[1][3] = 1;E[1][4] = 0;
-	        E[2][0] = 0;E[2][1] = 0;E[2][2] = 0;E[2][3] = 1;E[2][4] = 0;
-	        E[3][0] = 0;E[3][1] = 0;E[3][2] = 1;E[3][3] = 0;E[3][4] = 0;
-	        E[4][0] = 0;E[4][1] = 1;E[4][2] = 0;E[4][3] = 0;E[4][4] = 0;
-	        E[5][0] = 1;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 1;
-	        break;
-	    case 3:
-	        E[0][0] = 0;E[0][1] = 1;E[0][2] = 1;E[0][3] = 1;E[0][4] = 1;
-	        E[1][0] = 0;E[1][1] = 0;E[1][2] = 0;E[1][3] = 0;E[1][4] = 1;
-	        E[2][0] = 0;E[2][1] = 1;E[2][2] = 1;E[2][3] = 1;E[2][4] = 1;
-	        E[3][0] = 0;E[3][1] = 0;E[3][2] = 0;E[3][3] = 0;E[3][4] = 1;
-	        E[4][0] = 0;E[4][1] = 0;E[4][2] = 0;E[4][3] = 0;E[4][4] = 1;
-	        E[5][0] = 0;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 1;
-	        break;
-	    case 4:
-	        E[0][0] = 1;E[0][1] = 0;E[0][2] = 0;E[0][3] = 1;E[0][4] = 0;
-	        E[1][0] = 1;E[1][1] = 0;E[1][2] = 0;E[1][3] = 1;E[1][4] = 0;
-	        E[2][0] = 1;E[2][1] = 0;E[2][2] = 0;E[2][3] = 1;E[2][4] = 0;
-	        E[3][0] = 1;E[3][1] = 1;E[3][2] = 1;E[3][3] = 1;E[3][4] = 0;
-	        E[4][0] = 0;E[4][1] = 0;E[4][2] = 0;E[4][3] = 1;E[4][4] = 0;
-	        E[5][0] = 0;E[5][1] = 0;E[5][2] = 0;E[5][3] = 1;E[5][4] = 0;
-	        break;
-	    case 5:
-	        E[0][0] = 0;E[0][1] = 1;E[0][2] = 1;E[0][3] = 1;E[0][4] = 1;
-	        E[1][0] = 0;E[1][1] = 1;E[1][2] = 0;E[1][3] = 0;E[1][4] = 0;
-	        E[2][0] = 0;E[2][1] = 1;E[2][2] = 1;E[2][3] = 1;E[2][4] = 1;
-	        E[3][0] = 0;E[3][1] = 0;E[3][2] = 0;E[3][3] = 0;E[3][4] = 1;
-	        E[4][0] = 0;E[4][1] = 0;E[4][2] = 0;E[4][3] = 0;E[4][4] = 1;
-	        E[5][0] = 0;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 1;
-	        break;
-	    case 6:
-	        E[0][0] = 1;E[0][1] = 1;E[0][2] = 1;E[0][3] = 1;E[0][4] = 0;
-	        E[1][0] = 1;E[1][1] = 0;E[1][2] = 0;E[1][3] = 0;E[1][4] = 0;
-	        E[2][0] = 1;E[2][1] = 1;E[2][2] = 1;E[2][3] = 1;E[2][4] = 0;
-	        E[3][0] = 1;E[3][1] = 0;E[3][2] = 0;E[3][3] = 1;E[3][4] = 0;
-	        E[4][0] = 1;E[4][1] = 0;E[4][2] = 0;E[4][3] = 1;E[4][4] = 0;
-	        E[5][0] = 1;E[5][1] = 1;E[5][2] = 1;E[5][3] = 1;E[5][4] = 0;
-	        break;
+    case 0:
+        E[0][0] = 0;
+        E[0][1] = 1;
+        E[0][2] = 1;
+        E[0][3] = 1;
+        E[0][4] = 0;
+        E[1][0] = 1;
+        E[1][1] = 0;
+        E[1][2] = 0;
+        E[1][3] = 0;
+        E[1][4] = 1;
+        E[2][0] = 1;
+        E[2][1] = 0;
+        E[2][2] = 0;
+        E[2][3] = 0;
+        E[2][4] = 1;
+        E[3][0] = 1;
+        E[3][1] = 0;
+        E[3][2] = 0;
+        E[3][3] = 0;
+        E[3][4] = 1;
+        E[4][0] = 1;
+        E[4][1] = 0;
+        E[4][2] = 0;
+        E[4][3] = 0;
+        E[4][4] = 1;
+        E[5][0] = 0;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 0;
+        break;
+    case 1:
+        E[0][0] = 0;
+        E[0][1] = 0;
+        E[0][2] = 1;
+        E[0][3] = 0;
+        E[0][4] = 0;
+        E[1][0] = 0;
+        E[1][1] = 1;
+        E[1][2] = 1;
+        E[1][3] = 0;
+        E[1][4] = 0;
+        E[2][0] = 0;
+        E[2][1] = 0;
+        E[2][2] = 1;
+        E[2][3] = 0;
+        E[2][4] = 0;
+        E[3][0] = 0;
+        E[3][1] = 0;
+        E[3][2] = 1;
+        E[3][3] = 0;
+        E[3][4] = 0;
+        E[4][0] = 0;
+        E[4][1] = 0;
+        E[4][2] = 1;
+        E[4][3] = 0;
+        E[4][4] = 0;
+        E[5][0] = 1;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 1;
+        break;
+    case 2:
+        E[0][0] = 0;
+        E[0][1] = 1;
+        E[0][2] = 1;
+        E[0][3] = 1;
+        E[0][4] = 0;
+        E[1][0] = 0;
+        E[1][1] = 1;
+        E[1][2] = 0;
+        E[1][3] = 1;
+        E[1][4] = 0;
+        E[2][0] = 0;
+        E[2][1] = 0;
+        E[2][2] = 0;
+        E[2][3] = 1;
+        E[2][4] = 0;
+        E[3][0] = 0;
+        E[3][1] = 0;
+        E[3][2] = 1;
+        E[3][3] = 0;
+        E[3][4] = 0;
+        E[4][0] = 0;
+        E[4][1] = 1;
+        E[4][2] = 0;
+        E[4][3] = 0;
+        E[4][4] = 0;
+        E[5][0] = 1;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 1;
+        break;
+    case 3:
+        E[0][0] = 0;
+        E[0][1] = 1;
+        E[0][2] = 1;
+        E[0][3] = 1;
+        E[0][4] = 1;
+        E[1][0] = 0;
+        E[1][1] = 0;
+        E[1][2] = 0;
+        E[1][3] = 0;
+        E[1][4] = 1;
+        E[2][0] = 0;
+        E[2][1] = 1;
+        E[2][2] = 1;
+        E[2][3] = 1;
+        E[2][4] = 1;
+        E[3][0] = 0;
+        E[3][1] = 0;
+        E[3][2] = 0;
+        E[3][3] = 0;
+        E[3][4] = 1;
+        E[4][0] = 0;
+        E[4][1] = 0;
+        E[4][2] = 0;
+        E[4][3] = 0;
+        E[4][4] = 1;
+        E[5][0] = 0;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 1;
+        break;
+    case 4:
+        E[0][0] = 1;
+        E[0][1] = 0;
+        E[0][2] = 0;
+        E[0][3] = 1;
+        E[0][4] = 0;
+        E[1][0] = 1;
+        E[1][1] = 0;
+        E[1][2] = 0;
+        E[1][3] = 1;
+        E[1][4] = 0;
+        E[2][0] = 1;
+        E[2][1] = 0;
+        E[2][2] = 0;
+        E[2][3] = 1;
+        E[2][4] = 0;
+        E[3][0] = 1;
+        E[3][1] = 1;
+        E[3][2] = 1;
+        E[3][3] = 1;
+        E[3][4] = 0;
+        E[4][0] = 0;
+        E[4][1] = 0;
+        E[4][2] = 0;
+        E[4][3] = 1;
+        E[4][4] = 0;
+        E[5][0] = 0;
+        E[5][1] = 0;
+        E[5][2] = 0;
+        E[5][3] = 1;
+        E[5][4] = 0;
+        break;
+    case 5:
+        E[0][0] = 0;
+        E[0][1] = 1;
+        E[0][2] = 1;
+        E[0][3] = 1;
+        E[0][4] = 1;
+        E[1][0] = 0;
+        E[1][1] = 1;
+        E[1][2] = 0;
+        E[1][3] = 0;
+        E[1][4] = 0;
+        E[2][0] = 0;
+        E[2][1] = 1;
+        E[2][2] = 1;
+        E[2][3] = 1;
+        E[2][4] = 1;
+        E[3][0] = 0;
+        E[3][1] = 0;
+        E[3][2] = 0;
+        E[3][3] = 0;
+        E[3][4] = 1;
+        E[4][0] = 0;
+        E[4][1] = 0;
+        E[4][2] = 0;
+        E[4][3] = 0;
+        E[4][4] = 1;
+        E[5][0] = 0;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 1;
+        break;
+    case 6:
+        E[0][0] = 1;
+        E[0][1] = 1;
+        E[0][2] = 1;
+        E[0][3] = 1;
+        E[0][4] = 0;
+        E[1][0] = 1;
+        E[1][1] = 0;
+        E[1][2] = 0;
+        E[1][3] = 0;
+        E[1][4] = 0;
+        E[2][0] = 1;
+        E[2][1] = 1;
+        E[2][2] = 1;
+        E[2][3] = 1;
+        E[2][4] = 0;
+        E[3][0] = 1;
+        E[3][1] = 0;
+        E[3][2] = 0;
+        E[3][3] = 1;
+        E[3][4] = 0;
+        E[4][0] = 1;
+        E[4][1] = 0;
+        E[4][2] = 0;
+        E[4][3] = 1;
+        E[4][4] = 0;
+        E[5][0] = 1;
+        E[5][1] = 1;
+        E[5][2] = 1;
+        E[5][3] = 1;
+        E[5][4] = 0;
+        break;
     }
-
-    return E;
+    int i, j, k = 0;
+    for(i = 0 ; i< linhas; i ++)
+    {
+        for(j = 0 ; j< colunas; j ++)
+        {
+            p[k++] = E[i][j];
+        }
+    }
 }
-
-
-
-
