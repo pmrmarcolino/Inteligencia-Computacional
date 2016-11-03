@@ -34,6 +34,7 @@ void distorcao(Entrada *P, int **peso);
 int calculaSaida(int* P, int * peso);
 void printaresposta(int *Y);
 void letras(Entrada *P, int **peso);
+void printavet(int*  vet);
 
 //----------------------------------------------------------------------------------------------
 
@@ -89,7 +90,7 @@ int main(int argc, char const *argv[])
     for ( i = 0; i < 6; ++i)
     {
         printf("\nPeso %d:\n",i);
-        imprimePeso(peso[i]);    
+        printavet(peso[i]);    
     }
  
     printf("Iteracoes = %d\n", soma);
@@ -117,6 +118,29 @@ int main(int argc, char const *argv[])
     }
 
     return 0;
+}
+//----------------------------------------------------------------------------------------------
+void printavet(int*  vet)
+{
+    int i,j,k;
+    printf("\n\n");
+    printf("\n+");
+    for(k=0; k<5; k++)
+        printf("---+");
+    printf("\n");
+    for(i=0; i<6; i++)
+    {
+        for(j=0; j<5; j++)
+            if(vet[i*5+j]!=0)
+                printf("|%2.0d ",vet[i*5+j]);
+            else
+                printf("|   ");
+        printf("|\n+");
+        for(k=0; k<5; k++)
+            printf("---+");
+        printf("\n");
+            //printf("%2.0f ",vet[i*5+j]);
+    }
 }
 //----------------------------------------------------------------------------------------------
 void letras(Entrada *P, int **peso){

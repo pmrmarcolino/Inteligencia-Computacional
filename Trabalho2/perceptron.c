@@ -23,6 +23,8 @@ int * verificaFuncaoP1(int somatorio, int *P,int *peso, int *altera);
 int somatorio(int * P, int * peso);
 void distorcao(int *P, int *peso, int esperado);
 int calculaSaida(int * P, int * peso);
+void printavet(int*  vet);
+void treinaOutros(int *P, int *peso);
 
 //----------------------------------------------------------------------------------------------
 
@@ -33,11 +35,19 @@ int main(int argc, char const *argv[])
 
     int *P0;
     int *P1;
+    int *P2;
+    int *P3;
+    int *P4;
+    int *P5;
     int *peso;
     int esperado;
 
     P0 = criaNeuronio();
     P1 = criaNeuronio();
+    P2 = criaNeuronio();
+    P3 = criaNeuronio();
+    P4 = criaNeuronio();
+    P5 = criaNeuronio();
     peso = criaNeuronio();
 
     geraPeso(peso);
@@ -49,18 +59,67 @@ int main(int argc, char const *argv[])
     imprime(P0);
 
     preenche(P1,1);
-    printf("\nUm:\n\n");
+    printf("\nZero:\n\n");
     imprime(P1);
+
+    preenche(P2,2);
+
+    preenche(P3,3);
+
+    preenche(P4,4);
+
+    preenche(P5,5);
+
 
     peso = treinamento(P0,P1,peso);
     
     printf("\nPeso Final:\n\n");
-    imprimePeso(peso);
+    printavet(peso);
 
     distorcao(P0,peso,0);
     distorcao(P1,peso,1);
 
+    
+    treinaOutros(P2,peso);
+    treinaOutros(P3,peso);
+    treinaOutros(P4,peso);
+    treinaOutros(P5,peso);
+
     return 0;
+}
+//----------------------------------------------------------------------------------------------
+void treinaOutros(int *P, int *peso){
+
+	int i, aleatorio, somat = 0;
+
+		imprime(P);
+
+		somat = calculaSaida(P,peso);
+
+		printf("Funcionou para : %d\n", somat);
+}
+//----------------------------------------------------------------------------------------------
+void printavet(int*  vet)
+{
+    int i,j,k;
+    printf("\n\n");
+    printf("\n+");
+    for(k=0; k<5; k++)
+        printf("---+");
+    printf("\n");
+    for(i=0; i<6; i++)
+    {
+        for(j=0; j<5; j++)
+            if(vet[i*5+j]!=0)
+                printf("|%2.0d ",vet[i*5+j]);
+            else
+                printf("|   ");
+        printf("|\n+");
+        for(k=0; k<5; k++)
+            printf("---+");
+        printf("\n");
+            //printf("%2.0f ",vet[i*5+j]);
+    }
 }
 //----------------------------------------------------------------------------------------------
 void distorcao(int *P, int *peso, int esperado){
@@ -229,7 +288,7 @@ int calculaSaida(int * P, int * peso)
         somat += P[i] * peso[i];
     }
 
-    printf("CalculaSaida = %d\n\n",somat);
+    //printf("CalculaSaida = %d\n\n",somat);
 
     if(somat <= 0)
     	return 0;

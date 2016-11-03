@@ -32,6 +32,8 @@ int * verificaFuncaoP1(int somatorio, Entrada *P,int *peso, int *altera);
 int somatorio(Entrada * P, int * peso);
 void distorcao(Entrada *P, int **peso, int esperado);
 int calculaSaida(int* P, int * peso);
+void printavet(int*  vet);
+void treinaOutros(Entrada *P, int **peso);
 
 //----------------------------------------------------------------------------------------------
 
@@ -40,27 +42,28 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
     //srand(0); // semente
 
-    Entrada *P[2];
-    int *peso[2];
+    Entrada *P[6];
+    Entrada *Letras[4];
+    int *peso[6];
     int esperado;
     int soma = 0;
+    int i;
 
-    P[0] = criaNeuronio(0);
-    P[1] = criaNeuronio(1);
-    peso[0] = criaPeso();
-    peso[1] = criaPeso();
+    for ( i = 0; i < 6; ++i)
+    {
+        P[i] = criaNeuronio(i);
+        peso[i] = criaPeso();
+        geraPeso(peso[i]);
+        preenche(P[i],i);  
+    }
 
-    geraPeso(peso[0]);
-    geraPeso(peso[1]);
     printf("\nPeso:\n\n");
     imprimePeso(peso[0]);
     imprimePeso(peso[1]);
 
-    preenche(P[0],0);
     printf("\nZero:\n\n");
     imprime(P[0]);
 
-    preenche(P[1],1);
     printf("\nUm:\n\n");
     imprime(P[1]);
 
@@ -69,15 +72,60 @@ int main(int argc, char const *argv[])
 
     printf("\nPeso Final:\n\n");
     printf("\nPeso zero:\n");
-    imprimePeso(peso[0]);
+    printavet(peso[0]);
     printf("\nPeso um:\n");
-    imprimePeso(peso[1]);
+    printavet(peso[1]);
     printf("Iteracoes = %d\n", soma);
 
     distorcao(P[0],peso,0);
-    distorcao(P[1],peso,0);
+    distorcao(P[1],peso,1);
+
+
+    for (i = 2; i < 6; ++i)
+    {
+        treinaOutros(P[i],peso);
+    }
 
     return 0;
+}
+//----------------------------------------------------------------------------------------------
+void treinaOutros(Entrada *P, int **peso){
+
+    int i,j, aleatorio, Y[6];
+
+    imprime(P);
+
+    for (j = 0; j < 6; ++j)
+        Y[j] = calculaSaida(P->E,peso[j]);
+
+    for (i = 0; i < 6; ++i)
+    {
+        printf("\nO resultado do neuronio %d eh %d\n",i,Y[i]);
+    }
+    printf("\n");
+}
+//----------------------------------------------------------------------------------------------
+void printavet(int*  vet)
+{
+    int i,j,k;
+    printf("\n\n");
+    printf("\n+");
+    for(k=0; k<5; k++)
+        printf("---+");
+    printf("\n");
+    for(i=0; i<6; i++)
+    {
+        for(j=0; j<5; j++)
+            if(vet[i*5+j]!=0)
+                printf("|%2.0d ",vet[i*5+j]);
+            else
+                printf("|   ");
+        printf("|\n+");
+        for(k=0; k<5; k++)
+            printf("---+");
+        printf("\n");
+            //printf("%2.0f ",vet[i*5+j]);
+    }
 }
 //----------------------------------------------------------------------------------------------
 void distorcao(Entrada *P, int **peso, int esperado){
