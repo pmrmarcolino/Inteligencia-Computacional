@@ -12,8 +12,8 @@ float beta = 1;
 
 double **alocarMatriz();
 void inicializar(double **matriz);
-void preencheMatrizDistancia(double **matriz_distancias, double coordenadas[][numero_cidades]);
-void preenche(double **coordenadas, double **matriz_distancia, int controle);
+void preencheMatrizDistancia(double **matriz_distancias, double **coordenadas);
+void preenche(double **coordenadas, double **matriz_distancia);
 void imprimeMatriz(double ** matriz);
 void distanciaEuclidiana(double **coordenadas, double **MatrizDistancia);
 void calculaProb(double **MatrizDistancia, double **MatrizFerormonio, double **probabilidade);
@@ -22,14 +22,14 @@ double somatorioFeromonio(double **MatrizDistancia, double **MatrizFerormonio, i
 //----------------------------------------------------------------------------------------------
 int main(){
 
-	double **MatrizDistancia = alocarMatriz();
+  double **MatrizDistancia = alocarMatriz();
   double **coordenadas = alocarMatriz();
   double **probabilidade = alocarMatriz();
-	double **MatrizFerormonio = alocarMatriz();
+  double **MatrizFerormonio = alocarMatriz();
 
 
 	inicializar(MatrizDistancia);
-  inicializar(MatrizFerormonio);
+        inicializar(MatrizFerormonio);
 
 	preenche(coordenadas,MatrizDistancia);
 
