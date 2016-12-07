@@ -33,14 +33,16 @@ int main(){
 
 	preenche(coordenadas,MatrizDistancia);
 
+	imprimeMatriz(MatrizDistancia);
+	imprimeMatriz(coordenadas);
+	
 	if(numero_cidades == 15 || numero_cidades == 29 || numero_cidades == 38){
 		distanciaEuclidiana(coordenadas,MatrizDistancia);
 	} 
 
-
-	imprimeMatriz(MatrizDistancia);
-	imprimeMatriz(coordenadas);
-
+	calculaProb(MatrizDistancia,MatrizFerormonio,probabilidade);
+	
+	return 0;
 }
 
 //----------------------------------------------------------------------------------------------
