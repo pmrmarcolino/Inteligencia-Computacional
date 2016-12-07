@@ -135,13 +135,12 @@ void imprimeMatriz(double **matriz){
 //----------------------------------------------------------------------------------------------
 void distanciaEuclidiana(double **coordenadas,double **MatrizDistancia){
 
-	for (int i = 0; i < numero_cidades; i++)
+	for (int x = 0; x < 2; x++)
 	{
-		for (int j = 0; j < numero_cidades; j++)
+		for (int y = 0; y < numero_cidades; y++)
 		{
 			if (i != j)		
-				MatrizDistancia[i][j] =(coordenadas[1][0]-coordenadas[0][i]*coordenadas[1][0]-coordenadas[0][i]) +()
+				MatrizDistancia[i][j] =sqrt(abs(coordenadas[x][y+1]-coordenadas[x][y])*abs(coordenadas[x][y+1]-coordenadas[y][y+1]));
 		}		
 	}
-	distancia = sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
 }
