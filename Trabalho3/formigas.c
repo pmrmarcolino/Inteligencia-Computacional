@@ -4,6 +4,9 @@
 
 int numero_cidades = 29;
 int inicial = 1;
+float ferormonio = 1;
+float alfa = 1;
+float beta = 1;
 
 //----------------------------------------------------------------------------------------------
 
@@ -13,22 +16,28 @@ void preencheMatrizDistancia(double **matriz_distancias, double coordenadas[][nu
 void preenche(double **coordenadas, double **matriz_distancia, int controle);
 void imprimeMatriz(double ** matriz);
 void distanciaEuclidiana(double **coordenadas, double **MatrizDistancia);
+void calculaProb(double **MatrizDistancia, double **MatrizFerormonio, double **probabilidade);
+double somatorioFeromonio(double **MatrizDistancia, double **MatrizFerormonio, int k);
+
 //----------------------------------------------------------------------------------------------
 int main(){
 
-	double **Matriz = alocarMatriz();
 	double **MatrizDistancia = alocarMatriz();
-	double **coordenadas = alocarMatriz();
+  double **coordenadas = alocarMatriz();
+  double **probabilidade = alocarMatriz();
+	double **MatrizFerormonio = alocarMatriz();
 
-	inicializar(Matriz);
+
 	inicializar(MatrizDistancia);
+  inicializar(MatrizFerormonio);
+
 	preenche(coordenadas,MatrizDistancia);
 
 	if(numero_cidades == 15 || numero_cidades == 29 || numero_cidades == 38){
 		distanciaEuclidiana(coordenadas,MatrizDistancia);
 	} 
 
-	imprimeMatriz(Matriz);
+
 	imprimeMatriz(MatrizDistancia);
 	imprimeMatriz(coordenadas);
 
@@ -134,13 +143,37 @@ void imprimeMatriz(double **matriz){
 }
 //----------------------------------------------------------------------------------------------
 void distanciaEuclidiana(double **coordenadas,double **MatrizDistancia){
-
-	for (int x = 0; x < 2; x++)
-	{
-		for (int y = 0; y < numero_cidades; y++)
-		{
-			if (i != j)		
-				MatrizDistancia[i][j] =sqrt(abs(coordenadas[x][y+1]-coordenadas[x][y])*abs(coordenadas[x][y+1]-coordenadas[y][y+1]));
-		}		
-	}
+//distancia = sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+double distancia;
+int k=0;
+  
+  for (int i = 0; i < numero_cidades; ++i)
+  {
+    for (int j = 0; j < numero_cidades; j++)
+    {
+  		     dist(coordenadas[i][j],coordenadas[i][j+1],coordenadas[i+1][j],coordenadas[i+1][j+1]); 
+    }
+  }		
 }
+//----------------------------------------------------------------------------------------------
+void calculaProb(double **MatrizDistancia, double **MatrizFerormonio, double **probabilidade){
+      int k,i;
+    for(k=0;k<numero_cidades;k++){
+        for(i=0;i<numero_cidades;i++){
+                probabilidade[k][i] = 0;
+            }
+            else{
+                probabilidade[k][i] = (powf(MatrizFerormonio[k][i],alfa) * powf(1/MatrizDistancia[k][i],beta))/somatorioFeromonio(MatrizDistancia,MatrizFerormonio,k);
+            }
+        }
+}
+//----------------------------------------------------------------------------------------------
+double somatorioFeromonio(double **MatrizDistancia, double **MatrizFerormonio, int k){
+    int i;
+    float somatorio = 0.0;
+    for(i=0;i<numero_cidades;i++){ 
+            somatorio += (powf(MatrizFerormonio[k][i],alfa) * powf(1/MatrizDistancia[k][i],beta));
+    }
+    return somatorio;
+}
+//----------------------------------------------------------------------------------------------
